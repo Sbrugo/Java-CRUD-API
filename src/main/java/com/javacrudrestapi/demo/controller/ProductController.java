@@ -64,5 +64,10 @@ public class ProductController {
         return productService.getProductsByName(productName);
     }
 
+    @GetMapping("/{productId}")
+    public ResponseEntity<Product> getProductById(@PathVariable long productId) {
+        Product product = productService.getProductById(productId);
+        return ResponseEntity.ok(product);  
+    }
 
 }
