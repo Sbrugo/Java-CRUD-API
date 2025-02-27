@@ -52,4 +52,9 @@ public class ProductService {
     public List<Product> getProductsByName(String productName) {
         return productRepository.getProductsByName(productName);
     }
+    
+     public Product getProductById(long productId) {
+        return productRepository.findById(productId)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
+    }
 }
