@@ -7,67 +7,56 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-
 import java.util.List;
 
-
 @RestController
+@RequestMapping("/api/products") 
 public class ProductController {
-
 
     @Autowired
     private ProductService productService;
 
-
-    // insert a product into database
-    @PostMapping("/product")
+    @PostMapping
     public ResponseEntity<Product> saveProduct(@RequestBody Product product) {
         Product savedProduct = productService.saveProduct(product);
         return new ResponseEntity<>(savedProduct, HttpStatus.CREATED);
     }
 
-
-    //get a single product by its id
-    @GetMapping("/product")
-    public ResponseEntity<Product> getProduct(@RequestParam(name = "productId") long productId) {
+    @GetMapping("/{productId}")  
+    public ResponseEntity<Product> getProduct(@PathVariable long productId) {
         Product product = productService.getProduct(productId);
-        return new ResponseEntity<>(product, HttpStatus.OK);
+        if (product != null) {
+            return new ResponseEntity<>(product, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-
-    //get all the products in the table in our database
-    @GetMapping("/products")
+    @GetMapping
     public List<Product> getProducts() {
         return productService.getProducts();
     }
 
-
-    //update an existing product in the database
-    @PatchMapping("/product")
-    public ResponseEntity<Product> updateProduct(@RequestParam(name ="productId") long productId, @RequestBody Product product) {
+    @PatchMapping("/{productId}") 
+    public ResponseEntity<Product> updateProduct(@PathVariable long productId, @RequestBody Product product) {
         Product updatedProduct = productService.updateProduct(productId, product);
-        return new ResponseEntity<>(updatedProduct, HttpStatus.OK);
+        if (updatedProduct != null) {
+            return new ResponseEntity<>(updatedProduct, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-
-    // delete an existing product in the database
-    @DeleteMapping("/product")
-    public ResponseEntity<Product> deleteProduct(@RequestParam(name ="productId") long productId) {
-        Product deletedProduct = productService.deleteproduct(productId);
-        return new ResponseEntity<>(deletedProduct, HttpStatus.OK);
+    @DeleteMapping("/{productId}")  
+    public ResponseEntity<Void> deleteProduct(@PathVariable long productId) {
+        boolean isDeleted = productService.deleteProduct(productId);
+        if (isDeleted) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-
-    // get product by name using a raw SQL statement
-    @GetMapping("/products-by-name")
-    public List<Product> getProductsByName(@RequestParam(name ="productName") String productName) {
+    @GetMapping("/search")  
+    public List<Product> getProductsByName(@RequestParam(name = "productName") String productName) {
         return productService.getProductsByName(productName);
     }
-
-    @GetMapping("/{productId}")
-    public ResponseEntity<Product> getProductById(@PathVariable long productId) {
-        Product product = productService.getProductById(productId);
-        return ResponseEntity.ok(product);  
-    }
-
 }
+
