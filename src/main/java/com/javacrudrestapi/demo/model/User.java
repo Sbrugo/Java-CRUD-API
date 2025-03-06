@@ -12,18 +12,19 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
+    @NotBlank(message = "Name is required")
+    @Size(min = 3, max = 20, message = "Name must be between 3 and 20 characters")
+    private String name;
 
-    @Column(name = "username", nullable = false)
-    private String username;
-
-
-    @Column(name = "email", nullable = false)
+    @NotBlank(message = "Email is required")
+    @Email(message = "Invalid email format")
+    @Column(unique = true) 
     private String email;
 
-
-    @Column(name = "password", nullable = false)
+    @NotBlank(message = "Password is required")
+    @Size(min = 6, message = "Password must be at least 6 characters long")
     private String password;
 
     public long getId() {
