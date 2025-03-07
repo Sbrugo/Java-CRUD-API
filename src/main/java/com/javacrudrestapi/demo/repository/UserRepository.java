@@ -1,14 +1,7 @@
-package com.javacrudrestapi.demo.repository;
-
 import org.springframework.data.jpa.repository.JpaRepository;
 import com.javacrudrestapi.demo.model.User;
-import org.springframework.data.jpa.repository.Query;
-
-
-import java.util.List;
-
+import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long> {
-    @Query(value = "SELECT * FROM user_inventory WHERE username = ?1", nativeQuery = true)
-    List<User> findUsersByUsername(String username);
+    Optional<User> findByUsername(String username);
 }
