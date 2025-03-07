@@ -50,7 +50,7 @@ public class UserService {
         }).orElse(false);
     }
 
-    public List<User> getUsersByName(String username) {
+    public List<User> getUsersByUsername(String username) {
         return userRepository.findByUsername(username);
     }
 }
