@@ -4,22 +4,27 @@ import com.javacrudrestapi.demo.model.User;
 import com.javacrudrestapi.demo.repository.UserRepository;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import org.springframework.beans.factory.annotation.Autowired;
+import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.security.Key;
 
 @Service
 public class AuthService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+    private final BCryptPasswordEncoder passwordEncoder;
+    private final Key secretKey;
 
-    @Autowired
-    private BCryptPasswordEncoder passwordEncoder;
-
-    private final String SECRET_KEY = "Key"; 
+    public AuthService(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder, 
+                       @Value("${jwt.secret}") String secret) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.secretKey = Keys.hmacShaKeyFor(secret.getBytes());
+    }
 
     public String login(String email, String password) {
         User user = userRepository.findByEmail(email)
@@ -37,7 +42,7 @@ public class AuthService {
                 .setSubject(user.getEmail())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + 86400000)) 
-                .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
+                .signWith(secretKey, SignatureAlgorithm.HS256)
                 .compact();
     }
 }
