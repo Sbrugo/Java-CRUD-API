@@ -34,12 +34,13 @@ public class AuthService {
             throw new RuntimeException("Invalid credentials");
         }
 
-        return generateToken(user);
+        return generateToken(user, user.getUsername());
     }
 
     private String generateToken(User user) {
         return Jwts.builder()
                 .setSubject(user.getEmail())
+                .claim("username", username)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + 86400000)) 
                 .signWith(secretKey, SignatureAlgorithm.HS256)
