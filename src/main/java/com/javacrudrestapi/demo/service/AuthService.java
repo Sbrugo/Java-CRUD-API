@@ -40,7 +40,7 @@ public class AuthService {
     private String generateToken(User user) {
         return Jwts.builder()
                 .setSubject(user.getEmail())
-                .claim("username", username)
+                .claim("username", user.getUsername())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + 86400000)) 
                 .signWith(secretKey, SignatureAlgorithm.HS256)
